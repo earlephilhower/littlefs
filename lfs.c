@@ -2135,6 +2135,8 @@ int lfs_format(lfs_t *lfs, const struct lfs_config *cfg) {
         lfs->root[1] = root.pair[1];
 
         // write superblocks
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-field-initializers"
         lfs_superblock_t superblock = {
             .off = sizeof(superdir.d),
             .d.type = LFS_TYPE_SUPERBLOCK,
@@ -2146,6 +2148,7 @@ int lfs_format(lfs_t *lfs, const struct lfs_config *cfg) {
             .d.block_count = lfs->cfg->block_count,
             .d.root = {lfs->root[0], lfs->root[1]},
         };
+#pragma GCC diagnostic pop
         superdir.d.tail[0] = root.pair[0];
         superdir.d.tail[1] = root.pair[1];
         superdir.d.size = sizeof(superdir.d) + sizeof(superblock.d) + 4;
@@ -2479,8 +2482,11 @@ int lfs_deorphan(lfs_t *lfs) {
         return 0;
     }
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-field-initializers"
     lfs_dir_t pdir = {.d.size = 0x80000000};
     lfs_dir_t cwd = {.d.tail[0] = 0, .d.tail[1] = 1};
+#pragma GCC diagnostic pop
 
     // iterate over all directory directory entries
     for (lfs_size_t i = 0; i < lfs->cfg->block_count; i++) {
